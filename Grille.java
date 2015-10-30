@@ -60,9 +60,8 @@ public class Grille extends Thread
     public void Maj_Acceleration(){
         for (int i = 0; i<taille_h; i++) {
             for (int j = 0; j<taille_l; j++) {
-                if(grille[i][j].affichage=="V"){
+                if(grille[i][j].affichage=="V" && grille[i-1][j].affichage!="P"){
                     grille[i][j].acceleration_attente=(int)(Math.random() * 6)+1;
-                    System.out.println("jhjgjomevrjnkelvnekv khvj vkh vh vkrvehrvvjhvvejvkve     "+grille[i][j].acceleration_attente);
                 }
             }
         }
@@ -75,13 +74,13 @@ public class Grille extends Thread
         for (int i = taille_h-1; i>=0; i--) {
             for (int j = 0; j<taille_l; j++) {
                 if (grille[i][j].affichage=="V" && grille[i][j].acceleration_attente!=0){
-                    s=Obstacle_Devant(i, j);
-                    if (s!=0){
+                    //s=Obstacle_Devant(i, j);
+                   /* if (s!=0){
                         Voiture_Devant_Obstacle(s, i, j);
                     }
-                    else{
+                    else{*/
                         Avancer_Voiture(i,j);
-                    }
+                   // }
                 }
             }
             System.out.println();
@@ -117,7 +116,7 @@ public class Grille extends Thread
         }
     }
     
-    public int Obstacle_Devant(int i, int j){
+ /*   public int Obstacle_Devant(int i, int j){
         for (int x=i ; x>=i-grille[i][j].acceleration_attente;x--){
             if (grille[x][j].affichage=="V" || grille[x][j].affichage=="P"){
                 if(grille[x][j].affichage=="R")
@@ -125,24 +124,41 @@ public class Grille extends Thread
             }
         }
         return 0;
-    }
+    }*/
     
     public void Avancer_Voiture(int i, int j){
-        if(grille[i][j].acceleration_attente!=0){
+        if(grille[i][j].acceleration_attente!=0 && grille[i-1][j].affichage=="R"){
             Avancer_1_case(i, j);
+        }
+        else if(grille[i][j].acceleration_attente!=0 && grille[i-1][j].affichage=="P"){
+            Temps_Actualise((grille[i-1][j].acceleration_attente)*100);
+            Avancer_2_case(i, j);
+        }
+        else if(grille[i][j].acceleration_attente!=0 && grille[i-1][j].affichage=="V"){
+            if (grille[i-1][j].acceleration_attente!=0 && grille[i-2][j].affichage=="R"){
+                Avancer_1_case(i-1, j);
+                grille[i-1][j].acceleration_attente=grille[i-1][j].acceleration_attente-1;
+            }
         }
     }
     
-    public void Voiture_Devant_Obstacle(int x, int i, int j){
+   /* public void Voiture_Devant_Obstacle(int x, int i, int j){
         if(i-x>=0 && grille[i][j].acceleration_attente!=0){
             Avancer_1_case(i, j);
         }
-    }
+    }*/
     
     public void Avancer_1_case(int i, int j){
         grille[i-1][j].affichage=grille[i][j].affichage;
         grille[i][j].affichage="R";
         grille[i-1][j].acceleration_attente=grille[i][j].acceleration_attente-1;
+        grille[i][j].acceleration_attente=0;
+    }
+    
+    public void Avancer_2_case(int i, int j){
+        grille[i-2][j].affichage=grille[i][j].affichage;
+        grille[i][j].affichage="R";
+        grille[i-2][j].acceleration_attente=grille[i][j].acceleration_attente-2;
         grille[i][j].acceleration_attente=0;
     }
     
