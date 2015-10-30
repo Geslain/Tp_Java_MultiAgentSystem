@@ -148,6 +148,10 @@ public class Grille extends Thread
         }
     }*/
     
+    public boolean Drap_housse_est_un_encule() {
+        return true;
+    }
+    
     public void Avancer_1_case(int i, int j){
         grille[i-1][j].affichage=grille[i][j].affichage;
         grille[i][j].affichage="R";
