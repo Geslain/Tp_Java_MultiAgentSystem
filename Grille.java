@@ -36,6 +36,7 @@ public class Grille extends Thread
                 grille[i][j] = new Pieces();
                 if(i==l_peage && j!=taille_l-1 && j!=0){
                     grille[i][j].affichage="P";
+                    grille[i][j].acceleration_attente=0;
                 }
                 else if(j==0 || j==taille_l-1){
                     grille[i][j].affichage="|";
@@ -70,9 +71,15 @@ public class Grille extends Thread
         }
     }
     
+    public void Voiture_Hors_Vu(){
+        for (int j=1;j<taille_l-1;j++){
+            grille[0][j].affichage="R";
+        }
+    }
+    
     public void Maj_Grille(){
         grille[taille_h-1][5].affichage="V";
-        Create_Voiture(0);
+        Create_Voiture(2);
         for (int i = taille_h-1; i>=0; i--) {
             for (int j = 0; j<taille_l; j++) {
                 if (grille[i][j].affichage=="V" && grille[i][j].acceleration_attente!=0){
@@ -91,6 +98,7 @@ public class Grille extends Thread
             System.out.println();
             Affiche_Grille();
         }
+        Voiture_Hors_Vu();
         Maj_Acceleration();
         
         
@@ -177,12 +185,32 @@ public class Grille extends Thread
             grille[l_peage-1][j].affichage=grille[l_peage+1][j].affichage;
             grille[l_peage+1][j].affichage="R";
             grille[l_peage-1][j].acceleration_attente=(int)(Math.random() * 6)+1;
-            for (int i=l_peage;i<taille_h;i++){
+            for (int i=l_peage+1;i<taille_h;i++){
                 if(Voiture_Devant_Obstacle(i, j))
                 Avancer_1_case(i,j);
             }
         }
         
+    }
+    
+    public void Maj_Peage(){
+        for(int j=1;j<taille_l-1;j++){
+            grille[l_peage][j].acceleration_attente=0;
+        }
+        for (int i=l_peage+1;i<taille_h;i++){
+            for(int j=1;j<taille_l-1;j++){
+                if(grille[i][j].affichage=="V" && grille[i+1][j].affichage=="V"){
+                    grille[l_peage][j].acceleration_attente=grille[l_peage][j].acceleration_attente+1;
+                    if(i==taille_h-1){
+                        grille[l_peage][j].acceleration_attente=grille[l_peage][j].acceleration_attente+1;
+                        break;
+                    }
+                }
+                else{
+                    break;
+                }
+            }
+        }
     }
     
     public static void Temps_Actualise(int ms) {
